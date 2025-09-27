@@ -36,8 +36,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     
-    implementation "org.spongepowered:mixin:0.12.5+mixin.0.8.5"
-    annotationProcessor "org.spongepowered:mixin:0.12.5+mixin.0.8.5:processor"
+    implementation "org.spongepowered:mixin:0.12.5"
+    annotationProcessor "org.spongepowered:mixin:0.12.5:processor"
 }
 
 loom {
@@ -61,10 +61,14 @@ publishing {
             from components.java
         }
     }
-    repositories {
-        maven {
-            url = uri("file://${project.buildDir}/maven-repo")
-        }
-    }
+repositories {
+    // 优先Sponge仓库（Mixin的官方来源）
+    maven { url 'https://repo.spongepowered.org/maven/' }
+    // 其他仓库...
+    maven { url 'https://maven.fabricmc.net/' }
+    maven { url 'https://libraries.minecraft.net/' }
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
     
