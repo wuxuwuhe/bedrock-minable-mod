@@ -1,41 +1,44 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'  // Fabric 专用编译插件，适配 1.21.6
+    id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'maven-publish'
     id 'java'
 }
 
-version = project.mod_version  // 读取 gradle.properties 中的版本号
-group = project.maven_group    // 读取 gradle.properties 中的包名
+// 添加Fabric插件仓库（关键修复）
+pluginManagement {
+    repositories {
+        maven { url 'https://maven.fabricmc.net/' } // Fabric插件仓库
+        gradlePluginPortal() // Gradle中央插件仓库
+    }
+}
+
+version = project.mod_version
+group = project.maven_group
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21  // 1.21.6 要求 JDK 21
+    sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
-    withSourcesJar()  // 生成源码包（可选，便于调试）
+    withSourcesJar()
 }
 
 repositories {
-    mavenCentral()  // 中央仓库，拉取基础依赖
-    maven { url = 'https://maven.fabricmc.net/' }  // Fabric 官方仓库
-    maven { url = 'https://libraries.minecraft.net/' }  // Minecraft 官方库
+    mavenCentral()
+    maven { url 'https://maven.fabricmc.net/' }
+    maven { url 'https://libraries.minecraft.net/' }
+    // 添加国内镜像加速（可选）
+    maven { url 'https://maven.aliyun.com/repository/public/' }
 }
 
 dependencies {
-    // Minecraft 基础依赖（从 Fabric 仓库获取）
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    // Yarn 映射文件（确保与 minecraft_version 匹配）
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    // Fabric Loader（模组加载器）
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    
-    // Fabric API 核心依赖（必须，否则模组无法调用 Fabric 接口）
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     
-    // Mixin 依赖（修改基岩硬度需要用到）
     implementation "org.spongepowered:mixin:0.12.5+mixin.0.8.5"
     annotationProcessor "org.spongepowered:mixin:0.12.5+mixin.0.8.5:processor"
 }
 
-// 编译配置：设置模组 Jar 文件的元数据
 loom {
     runs {
         client {
@@ -51,7 +54,6 @@ loom {
     }
 }
 
-// 发布配置（可选，不影响编译，仅用于上传到 Maven）
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -64,3 +66,4 @@ publishing {
         }
     }
 }
+    
