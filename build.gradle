@@ -4,14 +4,6 @@ plugins {
     id 'java'
 }
 
-// 添加Fabric插件仓库（关键修复）
-pluginManagement {
-    repositories {
-        maven { url 'https://maven.fabricmc.net/' } // Fabric插件仓库
-        gradlePluginPortal() // Gradle中央插件仓库
-    }
-}
-
 version = project.mod_version
 group = project.maven_group
 
@@ -25,7 +17,7 @@ repositories {
     mavenCentral()
     maven { url 'https://maven.fabricmc.net/' }
     maven { url 'https://libraries.minecraft.net/' }
-    // 添加国内镜像加速（可选）
+    // 国内镜像加速（可选）
     maven { url 'https://maven.aliyun.com/repository/public/' }
 }
 
