@@ -19,6 +19,15 @@ repositories {
     maven { url 'https://libraries.minecraft.net/' }
     // 国内镜像加速（可选）
     maven { url 'https://maven.aliyun.com/repository/public/' }
+    repositories {
+    mavenCentral()
+    maven { url 'https://maven.fabricmc.net/' }  // Fabric官方仓库
+    maven { url 'https://libraries.minecraft.net/' }
+    maven { url 'https://maven.aliyun.com/repository/public/' }  // 阿里云镜像
+    maven { url 'https://repo.spongepowered.org/maven/' }  // Sponge仓库（Mixin相关）
+    maven { url 'https://jitpack.io' }  // 额外备用仓库
+}
+    
 }
 
 dependencies {
