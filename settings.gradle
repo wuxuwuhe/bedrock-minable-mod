@@ -1,10 +1,11 @@
-rootProject.name = 'bedrock-minable'
-
-// 插件仓库配置（只能放在settings.gradle中）
+// pluginManagement必须是文件中的第一个配置
 pluginManagement {
     repositories {
         maven { url 'https://maven.fabricmc.net/' } // Fabric插件仓库
         gradlePluginPortal() // Gradle中央插件仓库
     }
 }
+
+// 项目名称放在pluginManagement之后
+rootProject.name = 'bedrock-minable'
     
