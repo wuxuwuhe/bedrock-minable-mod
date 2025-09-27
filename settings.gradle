@@ -1,0 +1,1 @@
+rootProject.name = 'bedrock-minable'  // 项目名称，与 gradle.properties 中的 archives_base_name 一致
