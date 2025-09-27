@@ -1,1 +1,10 @@
-rootProject.name = 'bedrock-minable'  // 项目名称，与 gradle.properties 中的 archives_base_name 一致
+rootProject.name = 'bedrock-minable'
+
+// 插件仓库配置（只能放在settings.gradle中）
+pluginManagement {
+    repositories {
+        maven { url 'https://maven.fabricmc.net/' } // Fabric插件仓库
+        gradlePluginPortal() // Gradle中央插件仓库
+    }
+}
+    
