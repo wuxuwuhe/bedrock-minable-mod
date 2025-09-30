@@ -55,9 +55,33 @@ loom {
     }
 }
 
-publishing {
-    // 你的配置内容
+plugins {
+    id 'fabric-loom' version '1.6.12'
+    id 'maven-publish' // 确保添加了这个插件
+    id 'java'
 }
+
+// 其他配置...
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+        }
+    }
+    
+    // 可选的仓库配置
+    repositories {
+        maven {
+            url = uri("file://${project.projectDir}/repo")
+        }
+    }
+}
+
     publications {
         mavenJava(MavenPublication) {
             from components.java
