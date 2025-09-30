@@ -15,26 +15,33 @@ java {
 }
 
 repositories {
-    // 1. Fabric 官方仓库（优先）
-    maven { 
-        url 'https://maven.fabricmc.net/' 
+    // 1. 必须加阿里云仓库（国内首选，100% 有 0.111.0+1.21.6 版本）
+    maven {
+        url 'https://maven.aliyun.com/repository/public'
+        content {
+            includeGroup 'net.fabricmc'  // 只从这里拉取 Fabric 相关依赖
+            includeGroup 'com.mojang'
+        }
+    }
+
+    // 2. Modrinth 仓库（备用，第三方可靠源）
+    maven {
+        url 'https://api.modrinth.com/maven/'
+        content {
+            includeGroup 'maven.modrinth'
+            includeGroup 'net.fabricmc'
+        }
+    }
+
+    // 3. Fabric 官方仓库（备用）
+    maven {
+        url 'https://maven.fabricmc.net/'
         content { includeGroup 'net.fabricmc' }
     }
-    // 2. Fabric 快照仓库（备用）
-    maven { 
-        url 'https://maven.fabricmc.net/snapshots/' 
-        content { includeGroup 'net.fabricmc' }
-    }
-    // 3. Modrinth 仓库（第三方可靠来源）
-    maven { 
-        url 'https://api.modrinth.com/maven/' 
-        content { includeGroup 'maven.modrinth' }
-    }
-    // 4. 其他基础仓库
+
     mavenCentral()
     maven { url 'https://libraries.minecraft.net/' }
 }
-
 dependencies {
     // 1. Minecraft 核心依赖（保留变量，这部分没问题）
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
