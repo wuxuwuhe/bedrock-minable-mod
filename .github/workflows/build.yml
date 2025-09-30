@@ -1,0 +1,32 @@
+name: Build Mod
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 环境，与之前的 runner 一致
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  # 拉取代码到 runner
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'  # 启用 Gradle 缓存（加速后续构建，但本次会强制刷新）
+
+      - name: Clean and build with Gradle
+        run: |
+          # 1. 清除项目级缓存（build 目录和本地依赖缓存）
+          ./gradlew clean
+          
+          # 2. 强制刷新所有依赖并构建（忽略缓存，重新下载）
+          ./gradlew build --refresh-dependencies --console plain
+          
+          # 3. （可选）若仍有缓存问题，手动删除 runner 上的 Gradle 全局缓存
+          rm -rf ~/.gradle/caches/fabric-loom/ ~/.gradle/caches/modules-2/
+        env:
+          # 可选：设置国内镜像加速（解决网络问题）
+          MAVEN_MIRROR: https://maven.aliyun.com/repository/public
+    
