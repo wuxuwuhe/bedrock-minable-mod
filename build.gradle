@@ -1,54 +1,49 @@
 plugins {
-    id 'fabric-loom' version '1.6.12'
+    id 'fabric-loom' version '1.6.12'  // 稳定版本，与 Minecraft 1.20+ 兼容
     id 'maven-publish'
     id 'java'
 }
 
+// 版本配置（读取 gradle.properties 中的变量，避免硬编码）
 version = project.mod_version
 group = project.maven_group
+archivesBaseName = project.mod_id  // 确保与模组 ID 一致
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
-    withSourcesJar()
+    withSourcesJar()  // 自动生成源码包（发布时需要）
 }
 
 repositories {
-    // 确保 Sponge 仓库在前面，优先查找
-    maven { 
-        url 'https://repo.spongepowered.org/maven/' 
-        content {
-            includeGroup 'org.spongepowered'
-        }
-    }
-    mavenCentral()
-    maven { url 'https://maven.fabricmc.net/' }
-    maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://maven.aliyun.com/repository/public/' }
-    maven { url 'https://jitpack.io' }
+    // 仓库优先级：先查 Fabric 官方，再查中央仓库，最后用镜像
+    maven { url 'https://maven.fabricmc.net/' }  // Fabric 核心仓库
+    mavenCentral()  // 中央仓库（用于 fastutil 等依赖）
+    maven { url 'https://libraries.minecraft.net/' }  // Minecraft 官方库
+    maven { url 'https://maven.aliyun.com/repository/public/' }  // 国内镜像加速
 }
 
 dependencies {
+    // 1. 必须的 Minecraft 基础依赖（版本从 gradle.properties 读取）
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"  // Yarn  mappings（混淆映射）
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"  // Fabric 加载器
+
+    // 2. Fabric API 依赖（模组开发必需，提供方块/事件等 API）
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    
-    // 修复 Mixin 依赖 - 使用 Fabric 推荐的版本和配置方式
-    modImplementation "org.spongepowered:mixin:0.8.5+mixin.0.8.5"
-    annotationProcessor "org.spongepowered:mixin:0.8.5+mixin.0.8.5:processor"
-    
-    // 添加缺失的依赖库
-    implementation "com.mojang:serialization:1.3.25"
-    implementation "it.unimi.dsi:fastutil:8.5.12"
+
+    // 3. 补充缺失的依赖（解决之前的 "Cannot resolve class" 错误）
+    implementation "com.mojang:serialization:1.3.25"  // Mojang 序列化库
+    implementation "it.unimi.dsi:fastutil:8.5.12"     // FastUtil 集合库（Minecraft 依赖）
 }
 
+// Fabric Loom 运行配置（客户端/服务器调试）
 loom {
     runs {
         client {
-            configName "Client"
-            ideConfigGenerated true
-            source sourceSets.main
+            configName "Client"  // IDE 中显示的配置名
+            ideConfigGenerated true  // 自动生成 IDE 调试配置
+            source sourceSets.main  // 关联主源码集
         }
         server {
             configName "Server"
@@ -58,10 +53,11 @@ loom {
     }
 }
 
+// 发布配置（可选，用于生成可发布的 Jar 包）
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+            from components.java  // 从 Java 组件生成发布包
             groupId = project.group
             artifactId = project.archivesBaseName
             version = project.version
@@ -69,7 +65,7 @@ publishing {
     }
     repositories {
         maven {
-            url = uri("file://${project.projectDir}/repo")
+            url = uri("file://${project.projectDir}/repo")  // 本地发布路径
         }
     }
 }
