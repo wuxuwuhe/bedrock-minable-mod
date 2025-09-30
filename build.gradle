@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'fabric-loom' version '1.6.12'
     id 'maven-publish'
     id 'java'
 }
@@ -14,20 +14,13 @@ java {
 }
 
 repositories {
-    mavenCentral()
-    maven { url 'https://maven.fabricmc.net/' }
-    maven { url 'https://libraries.minecraft.net/' }
-    // 国内镜像加速（可选）
-    maven { url 'https://maven.aliyun.com/repository/public/' }
-    repositories {
+    // 主要仓库配置（去重合并）
     mavenCentral()
     maven { url 'https://maven.fabricmc.net/' }  // Fabric官方仓库
     maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://maven.aliyun.com/repository/public/' }  // 阿里云镜像
     maven { url 'https://repo.spongepowered.org/maven/' }  // Sponge仓库（Mixin相关）
+    maven { url 'https://maven.aliyun.com/repository/public/' }  // 阿里云镜像
     maven { url 'https://jitpack.io' }  // 额外备用仓库
-}
-    
 }
 
 dependencies {
@@ -55,14 +48,6 @@ loom {
     }
 }
 
-plugins {
-    id 'fabric-loom' version '1.6.12'
-    id 'maven-publish' // 确保添加了这个插件
-    id 'java'
-}
-
-// 其他配置...
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -80,21 +65,5 @@ publishing {
             url = uri("file://${project.projectDir}/repo")
         }
     }
-}
-
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-repositories {
-    // 优先Sponge仓库（Mixin的官方来源）
-    maven { url 'https://repo.spongepowered.org/maven/' }
-    // 其他仓库...
-    maven { url 'https://maven.fabricmc.net/' }
-    maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://maven.aliyun.com/repository/public/' }
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
 }
     
