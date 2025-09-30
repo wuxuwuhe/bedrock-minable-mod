@@ -1,11 +1,9 @@
-// 第1行：plugins块必须在文件最顶部，注释用//
 plugins {
-    id 'fabric-loom' version '1.7.3'  // 保持 1.7.3，无需升级  // 修复：# 替换为 //
+    id 'fabric-loom' version '1.7.3'
     id 'maven-publish'
     id 'java'
 }
 
-// 后续所有注释都用//开头（示例）
 version = project.mod_version
 group = project.maven_group
 archivesBaseName = project.mod_id
@@ -13,18 +11,58 @@ archivesBaseName = project.mod_id
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
-    withSourcesJar()  // 生成源码包（发布时需要）
+    withSourcesJar()
 }
 
 repositories {
-    // 优先 Fabric 官方仓库（确保拉取到正确依赖）
     maven { 
         url 'https://maven.fabricmc.net/' 
-        content { includeGroup 'net.fabricmc' }  // 只从这里拉取 Fabric 相关依赖
+        content { includeGroup 'net.fabricmc' }
     }
     mavenCentral()
     maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://maven.aliyun.com/repository/public/' }  // 国内加速（可选）
+    maven { url 'https://maven.aliyun.com/repository/public/' }
 }
 
-// 其他配置保持不变...
+dependencies {
+    // 关键修复：确保此依赖声明正确，且变量能被正确解析
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    
+    // 其他核心依赖（必须与 minecraft 依赖一起配置）
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    
+    // 补充依赖
+    implementation "com.mojang:serialization:1.3.25"
+    implementation "it.unimi.dsi:fastutil:8.5.12"
+}
+
+loom {
+    runs {
+        client {
+            configName "Client"
+            ideConfigGenerated true
+            source sourceSets.main
+        }
+        server {
+            configName "Server"
+            ideConfigGenerated true
+            source sourceSets.main
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+        }
+    }
+    repositories {
+        maven { url = uri("file://${project.projectDir}/repo") }
+    }
+}
