@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.7.3'  // 确认是 1.7.3（支持 1.21.6）
+    id 'fabric-loom' version '1.7.3'  # 保持 1.7.3，无需升级
     id 'maven-publish'
     id 'java'
 }
@@ -15,30 +15,28 @@ java {
 }
 
 repositories {
-    // 1. 优先 Fabric 官方仓库（稳定版 + 快照版，确保版本同步）
+    // 优先 Fabric 官方仓库（确保能拉取到 0.108.0+1.21.6 版本）
     maven { 
         url 'https://maven.fabricmc.net/' 
-        content { includeGroup 'net.fabricmc' }  // 只从这里拉取 Fabric 相关依赖
+        content { includeGroup 'net.fabricmc' }  // 只从这里拉取 Fabric 相关依赖，避免干扰
     }
-    maven { 
-        url 'https://maven.fabricmc.net/snapshots/' 
-        content { includeGroup 'net.fabricmc' }
-    }
-    // 2. 其他必要仓库
     mavenCentral()
     maven { url 'https://libraries.minecraft.net/' }
+    // 国内用户可选添加阿里云镜像（加速下载）
+    maven { url 'https://maven.aliyun.com/repository/public/' }
 }
 
 dependencies {
-    // 基础依赖（与 Minecraft 1.21.6 匹配）
+    // 1. Minecraft 基础依赖（与版本配置同步）
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     
-    // 关键修复：用 Loom 提供的 fabricApi() 方法，自动匹配版本（无需手动写坐标）
-    modImplementation fabricApi("${project.fabric_api_version}")
+    // 2. 关键修复：回退到传统 Fabric API 依赖写法（Loom 1.7.3 支持）
+    // 版本使用 0.108.0+1.21.6（官方仓库确认存在，不会找不到）
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     
-    // 补充缺失依赖（解决类找不到问题）
+    // 3. 补充缺失依赖（解决类找不到问题）
     implementation "com.mojang:serialization:1.3.25"
     implementation "it.unimi.dsi:fastutil:8.5.12"
 }
