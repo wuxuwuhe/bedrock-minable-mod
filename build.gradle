@@ -56,6 +56,8 @@ loom {
 }
 
 publishing {
+    // 你的配置内容
+}
     publications {
         mavenJava(MavenPublication) {
             from components.java
